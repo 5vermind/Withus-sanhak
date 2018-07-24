@@ -1,5 +1,6 @@
 package com.example.webservice.web;
 
+import com.example.webservice.data.Email;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +23,9 @@ public class AppRestController {
 	BasicService basicService;
 	@Autowired
 	UserService userService;
+	@Autowired
+    EmailController emailController;
+	String temp;
 
 	@RequestMapping("/basicinfo")
 	public Map basicInfo(HttpServletRequest request){
@@ -47,36 +51,56 @@ public class AppRestController {
 	public String logIn(HttpServletRequest request){
 		String id = request.getParameter("id");
 		String pw = request.getParameter("pw");
-		return userService.IogIn(id, pw);
+		return userService.logIn(id, pw);
 	}
+
 	@RequestMapping("/signup")
-	public String signUp(HttpServletRequest request){
-		String id = request.getParameter("id");
-		String pw = request.getParameter("pw");
-		return userService.signUp(id, pw);
-	}
+    public String signUp(HttpServletRequest request){
+	    String id = request.getParameter("id");
+	    String pw = request.getParameter("pw");
+        String certi = request.getParameter("cn");
+        if (certi.equals(this.temp)) {
+            return userService.signUp(id, pw);
+        }
+        else {
+            return "0";
+        }
+    }
 
 	@RequestMapping("/changePassword")
    	public String changePass(HttpServletRequest request){
 	    String id = request.getParameter("id");
 	    String cur_pw = request.getParameter("cur_pw");
 	    String new_pw = request.getParameter("new_pw");
-	    return userService.changePw(id, cur_pw, new_pw);
-    	}
-
-    	@RequestMapping("/goodBye")
-    	public String cancelid(HttpServletRequest request){
+	    return userService.changePw(id, cur_pw, new_pw); 
+	}
+    	
+	@RequestMapping("/goodBye")
+    public String cancelid(HttpServletRequest request){
 	    String id = request.getParameter("id");
 	    String  pw = request.getParameter("pw");
 	    String del = request.getParameter("request");
 	    if (!id.equals("null") && del.equals("null")){
-	   	     return userService.IogIn(id, pw);
-        	}
-       	    else if (!del.equals("null")){
-           	 return userService.cancelId(id, pw);
-       	 	}
-            else {
+	        return userService.logIn(id, pw);
+        }
+        else if (!del.equals(null)){
+            return userService.cancelId(id, pw);
+        }
+        else {
 	        return "0";
-       	    }
-    	}   
+        }
+    }
+
+    @RequestMapping("/send")
+    public String sendEmail(HttpServletRequest request) throws Exception {
+	    String id = request.getParameter("id");
+	    String what = request.getParameter("what");
+        this.temp = emailController.sendEmailAction(id, what);
+        System.out.println(this.temp);
+        if (this.temp.equals("0")){
+            return "-1"; // 아이디가 이미 있을 때
+        }
+	    return "1";
+    }
 }
+
