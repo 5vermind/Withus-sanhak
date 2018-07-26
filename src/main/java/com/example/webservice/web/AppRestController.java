@@ -1,19 +1,10 @@
 package com.example.webservice.web;
 
-import com.example.webservice.data.Email;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.SocketException;
-import java.net.UnknownHostException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -24,7 +15,7 @@ public class AppRestController {
 	@Autowired
 	UserService userService;
 	@Autowired
-    EmailController emailController;
+	EmailService emailService;
 	String temp;
 
 	@RequestMapping("/basicinfo")
@@ -72,9 +63,9 @@ public class AppRestController {
 	    String id = request.getParameter("id");
 	    String cur_pw = request.getParameter("cur_pw");
 	    String new_pw = request.getParameter("new_pw");
-	    return userService.changePw(id, cur_pw, new_pw); 
+	    return userService.changePw(id, cur_pw, new_pw);
 	}
-    	
+
 	@RequestMapping("/goodBye")
     public String cancelid(HttpServletRequest request){
 	    String id = request.getParameter("id");
@@ -95,7 +86,7 @@ public class AppRestController {
     public String sendEmail(HttpServletRequest request) throws Exception {
 	    String id = request.getParameter("id");
 	    String what = request.getParameter("what");
-        this.temp = emailController.sendEmailAction(id, what);
+        this.temp = emailService.sendEmailAction(id, what);
         System.out.println(this.temp);
         if (this.temp.equals("0")){
             return "-1"; // 아이디가 이미 있을 때
