@@ -87,7 +87,6 @@ public class AppRestController {
 	    String id = request.getParameter("id");
 	    String what = request.getParameter("what");
         this.temp = emailService.sendEmailAction(id, what);
-        System.out.println(this.temp);
         if (this.temp.equals("0")){
             return "-1"; // 아이디가 이미 있을 때
         }
